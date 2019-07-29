@@ -14,22 +14,20 @@ public class WorkFrame extends JFrame implements FFmpegUtil.CallBackListener {
     private JPanel contentJP;
     private ArrayList<String> mFileList = new ArrayList<>();
     private JButton mStartButton;
+    private String mSavePath = "D:\\handleVideo\\";
     public WorkFrame() {
         setLayout(null);
-        File file = new File("D:\\handleVideo\\");
-        if (!file.exists()){
-            file.mkdirs();
-        }
         addOpenButton();
         addStartButton();
         addStopButton();
+        addOutPutPath();
 
         contentJP = new JPanel();
         contentJP.setLayout(new BoxLayout(contentJP,BoxLayout.Y_AXIS));
 
         JScrollPane jsp = new JScrollPane(contentJP);
         jsp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        jsp.setBounds(10, 70, 1000, 500);
+        jsp.setBounds(10, 90, 1000, 500);
         add(jsp);
 
         addWindowListener(new WindowAdapter() {
@@ -44,14 +42,46 @@ public class WorkFrame extends JFrame implements FFmpegUtil.CallBackListener {
         show();
     }
 
+    private void addOutPutPath() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+        JLabel save = new JLabel("保存位置：");
+        panel.add(save);
+        JLabel name = new JLabel("D:\\handleVideo\\");
+        panel.add(name);
+        JButton button = new JButton("修改路径");
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser chooser = new JFileChooser();
+                chooser.setDialogTitle("选择目录");
+                chooser.setApproveButtonText("确定");
+                chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);  //设置只选择目录
+                int resule = chooser.showOpenDialog(new JPanel());
+                if (resule == chooser.APPROVE_OPTION) {
+                    String dir = chooser.getSelectedFile().getAbsolutePath();
+                    name.setText(dir);
+                    mSavePath = dir + "\\";
+                }
+            }
+        });
+        panel.add(button);
+        panel.setBounds(10,50,2000,30);
+        add(panel);
+    }
+
     private void addStartButton(){
         mStartButton = new JButton("开始处理");
         mStartButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                File file = new File(mSavePath);
+                if (!file.exists()){
+                    file.mkdirs();
+                }
                 mStartButton.setEnabled(false);
                 if (!mFileList.isEmpty()){
                     FFmpegUtil.setCallBackListener(WorkFrame.this);
-                    FFmpegUtil.doMain(mFileList,"D:\\handleVideo\\");
+                    FFmpegUtil.doMain(mFileList, mSavePath);
                 }
             }
         });
@@ -70,6 +100,7 @@ public class WorkFrame extends JFrame implements FFmpegUtil.CallBackListener {
         button.setBounds(280, 10, 150, 30);
         add(button);
     }
+
     private void addOpenButton() {
         JButton button = new JButton("选择目录");
         button.addActionListener(new ActionListener() {
