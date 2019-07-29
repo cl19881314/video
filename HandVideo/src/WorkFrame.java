@@ -47,7 +47,7 @@ public class WorkFrame extends JFrame implements FFmpegUtil.CallBackListener {
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
         JLabel save = new JLabel("保存位置：");
         panel.add(save);
-        JLabel name = new JLabel("D:\\handleVideo\\");
+        final JLabel name = new JLabel("D:\\handleVideo\\");
         panel.add(name);
         JButton button = new JButton("修改路径");
         button.addActionListener(new ActionListener() {

@@ -22,7 +22,7 @@ public class FFmpegUtil {
         try {
             run = Runtime.getRuntime();
             String tempName = UUID.randomUUID().toString().replace("-","") + ".mp4";
-            p = run.exec("ffmpeg -i "+videoInputPath+" -vf scale=1080:720,setsar=1:1 "+ videoOutPath + "\\" + tempName);
+            p = run.exec("ffmpeg -i "+videoInputPath+" -vf scale=1280:720,setsar=1:1 "+ videoOutPath + "\\" + tempName);
             mVideoPath2 = videoOutPath + tempName;
             //释放进程
             p.getOutputStream().close();
@@ -34,18 +34,18 @@ public class FFmpegUtil {
             }
             deleteFile(videoInputPath);
             deleteFile(videoOutPath + tempName);
+            mCount = 0;
             mTimer.cancel();
             mListener.updateSuccess(name);
         }catch (Exception e){
             e.printStackTrace();
             mTimer.cancel();
         }finally {
-            p.destroy();
             run.freeMemory();
         }
     }
 
-    private static void videoFilter(String videoInputPath, String videoOutPath, int videoWith,String name){
+    private static void videoFilter(String videoInputPath, String videoOutPath, int videoWith,int videoHeight,final String name){
 //        ffmpeg -i 11.mp4 -filter_complex "delogo=x=800:y=25:w=250:h=80:show=0" delogo1.mp4
         File file = new File(videoOutPath, name);
         if (file.exists()){
@@ -63,13 +63,12 @@ public class FFmpegUtil {
         Runtime run = null;
         Process p = null;
         try {
-
             run = Runtime.getRuntime();
-            int start = videoWith /4 * 3;
-            int with = videoWith /4 - 20;
-            System.out.println("start " + start +" with "+ with);
+            int start = videoWith /4 * 3 -10;
+            int with = videoWith /4 ;
+            double height = videoHeight / 6.5;
             String tempName = UUID.randomUUID().toString().replace("-","") + ".mp4";
-            String command = "ffmpeg -i "+videoInputPath+" -filter_complex \"delogo=x="+ start +":y=15:w=" + with +":h=80:show=0\" "+ videoOutPath + tempName;
+            String command = "ffmpeg -i "+videoInputPath+" -filter_complex \"delogo=x="+ start +":y=10:w=" + with +":h=" + height + ":show=0\" "+ videoOutPath + tempName;
             System.out.println(command);
             p = run.exec(command);
             mVideoPath1 = videoOutPath + tempName;
@@ -80,12 +79,20 @@ public class FFmpegUtil {
             p.getErrorStream().close();
             p.waitFor();
             System.out.println("end");
-            videoScale(videoOutPath + tempName,videoOutPath,name);
+            if (videoWith == 1280 || videoHeight == 720){
+                reNameFile(videoOutPath + tempName,videoOutPath + name);
+                deleteFile(videoOutPath + tempName);
+                mCount = 0;
+                mTimer.cancel();
+                mListener.updateSuccess(name);
+                System.out.println("跳过修改分辨率");
+            } else {
+                videoScale(videoOutPath + tempName, videoOutPath, name);
+            }
         }catch (Exception e){
             e.printStackTrace();
             mTimer.cancel();
         }finally {
-            p.destroy();
             run.freeMemory();
         }
     }
@@ -94,7 +101,7 @@ public class FFmpegUtil {
         mListener = listener;
     }
 
-    public static void doMain(ArrayList<String> fileList,String saveDirPath) {
+    public static void doMain(final ArrayList<String> fileList,final String saveDirPath) {
         mIsFishing = false;
         Runnable runnable = new Runnable() {
             @Override
@@ -104,7 +111,7 @@ public class FFmpegUtil {
                     String name = pathFile.substring(pathFile.lastIndexOf("\\") + 1);
                     System.out.println(name);
                     if (!mIsFishing) {
-                        videoFilter(pathFile, saveDirPath, videoWidth(pathFile), name);
+                        videoFilter(pathFile, saveDirPath, videoWidth(pathFile), videoHeight(pathFile),name);
                     }
                 }
             }
@@ -121,6 +128,18 @@ public class FFmpegUtil {
 //            System.out.println("此视频高度为:"+m.getVideo().getSize().getHeight());
 //            System.out.println("此视频宽度为:"+m.getVideo().getSize().getWidth());
             return m.getVideo().getSize().getWidth();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    private static int videoHeight(String video) {
+        File source = new File(video);
+        Encoder encoder = new Encoder();
+        try {
+            MultimediaInfo m = encoder.getInfo(source);
+            return m.getVideo().getSize().getHeight();
         } catch (Exception e) {
             e.printStackTrace();
         }
