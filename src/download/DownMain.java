@@ -19,11 +19,12 @@ public class DownMain {
     private static ExecutorService fixedThreadPool;
     private static Vector<String> failedUrlList;
     private static ArrayList<String> originalUrlList;
-    public static void main(String pathname){
+    private static String mSavePath;
+    public static void main(String pathname,String savePath){
+        mSavePath = savePath;
         fixedThreadPool = Executors.newFixedThreadPool(5);
         failedUrlList = new Vector<>();
         originalUrlList = new ArrayList<>();
-//        String pathname = "D:\\video.txt";
         FileReader reader = null;
         BufferedReader br = null;
         try {
@@ -121,12 +122,12 @@ public class DownMain {
                         if (variable.contains("videoSrc")){
                             String video = variable.substring(variable.indexOf("videoSrc") + 11,variable.indexOf("poster") - 2).replace("\\","");
                             String imgUrl = variable.substring(variable.indexOf("poster") + 9,variable.indexOf("emitlist") - 2).replace("\\","");
-                            File videoFile = new File("D:\\video\\"+ title + ".mp4");
+                            File videoFile = new File(mSavePath+ title + ".mp4");
                             if (videoFile.exists()){
                                 break;
                             }
-                            DownLoadUtil.httpDownload(imgUrl,"D:\\video\\"+ title + ".jpeg");
-                            String videoName = "D:\\video\\"+ UUID.randomUUID().toString();
+                            DownLoadUtil.httpDownload(imgUrl,mSavePath+ title + ".jpeg");
+                            String videoName = mSavePath + UUID.randomUUID().toString();
                             System.out.println("开始下载 :" + title);
 
                             mListener.videoUpdateNameListener(title);
@@ -136,7 +137,7 @@ public class DownMain {
                               throw new Exception();
                             } else  {
                                 System.out.println("下载成功:" + title);
-                                Utils.reNameFile(videoName, "D:\\video\\"+ title + ".mp4");
+                                Utils.reNameFile(videoName, mSavePath+ title + ".mp4");
                                 mListener.videoProgressListener(title,100);
                             }
                             break;

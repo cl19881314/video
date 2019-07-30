@@ -16,16 +16,16 @@ public class WorkFrame extends JFrame implements DownMain.VideoDownLister {
     private Hashtable<String, JProgressBar> mDownTable = new Hashtable<>();
     private JPanel contentJP;
     private JPanel failedJP;
-    private JLabel mDownTip,mFailedDownTip,mLoadingTip;
+    private JLabel mDownTip,mFailedDownTip,mLoadingTip,mSavePathTip;
     private Vector<String> mFailedUrlList = new Vector<>();
+    private String mSavePath = "D:\\video\\";
+    private String mDownPath = "";
     public WorkFrame() {
         setLayout(null);
-        File file = new File("D:\\video\\");
-        if (!file.exists()){
-            file.mkdirs();
-        }
         addOpenButton();
+        addStartButton();
         addReturyButton();
+        addSavePathButton();
 
         contentJP = new JPanel();
         contentJP.setLayout(new BoxLayout(contentJP,BoxLayout.Y_AXIS));
@@ -46,12 +46,12 @@ public class WorkFrame extends JFrame implements DownMain.VideoDownLister {
         add(jsp);
 
         mFailedDownTip = new JLabel("下载失败");
-        mFailedDownTip.setBounds(10, 575, 100, 20);
+        mFailedDownTip.setBounds(10, 585, 100, 20);
         add(mFailedDownTip);
 
         JScrollPane failedJsp = new JScrollPane(failedJP);
         failedJsp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        failedJsp.setBounds(10, 600, 1000, 200);
+        failedJsp.setBounds(10, 620, 1000, 180);
         add(failedJsp);
 
         addWindowListener(new WindowAdapter() {
@@ -81,14 +81,9 @@ public class WorkFrame extends JFrame implements DownMain.VideoDownLister {
                     failedJP.removeAll();
                     contentJP.updateUI();
                     failedJP.updateUI();
-//                    String fileName = file.getSelectedFile().getName();
                     String dir = file.getSelectedFile().getAbsolutePath();
+                    mDownPath = dir;
                     System.out.println(dir);
-                    mLoadingTip.setText("准备下载...");
-                    DownMain.addVideoNameListener(WorkFrame.this);
-                    DownMain.main(dir);
-//                        JOptionPane.showConfirmDialog(null, dir + "\\" + fileName, "选择的文件", JOptionPane.YES_OPTION);
-//                        System.out.println(dir + fileName);
                 }
             }
         });
@@ -107,6 +102,28 @@ public class WorkFrame extends JFrame implements DownMain.VideoDownLister {
                     failedJP.updateUI();
                     mFailedDownTip.setText("下载失败");
                     DownMain.main(mFailedUrlList);
+                } else {
+                    JOptionPane.showMessageDialog(null,"没有下载失败的链接");
+                }
+            }
+        });
+        button.setBounds(100, 580, 150, 30);
+        add(button);
+    }
+    private void addStartButton() {
+        JButton button = new JButton("开始下载");
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (!mDownPath.equals("")) {
+                    File file = new File(mSavePath);
+                    if (!file.exists()){
+                        file.mkdirs();
+                    }
+                    mLoadingTip.setText("准备下载...");
+                    DownMain.addVideoNameListener(WorkFrame.this);
+                    DownMain.main(mDownPath,mSavePath);
+                } else {
+                    JOptionPane.showMessageDialog(null,"请选择下载文件");
                 }
             }
         });
@@ -114,11 +131,49 @@ public class WorkFrame extends JFrame implements DownMain.VideoDownLister {
         add(button);
     }
 
+    private void addSavePathButton() {
+        JLabel path = new JLabel("保存目录");
+        path.setBounds(300,10,80,30);
+        add(path);
+        mSavePathTip= new JLabel(mSavePath);
+        mSavePathTip.setBounds(380,10,200,30);
+        add(mSavePathTip);
+        JButton button = new JButton("修改保存目录");
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser chooser = new JFileChooser();
+                chooser.setDialogTitle("选择目录");
+                chooser.setApproveButtonText("确定");
+                chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);  //设置只选择目录
+                FileFilter filter = new FileFilter() {
+                    @Override
+                    public boolean accept(File file) {
+                        return file.isDirectory();
+                    }
+
+                    @Override
+                    public String getDescription() {
+                        return null;
+                    }
+                };
+                chooser.addChoosableFileFilter(filter);
+                chooser.setFileFilter(filter);
+                int resule = chooser.showSaveDialog(new JPanel());
+                if (resule == chooser.APPROVE_OPTION) {
+                    mSavePath = chooser.getSelectedFile().getAbsolutePath() + "\\";
+                    mSavePathTip.setText(mSavePath);
+                }
+            }
+        });
+        button.setBounds(620, 10, 150, 30);
+        add(button);
+    }
+
     @Override
     public void videoSuccessListener(int count) {
         mFailedUrlList.clear();
         mLoadingTip.setText("下载完成");
-        JOptionPane.showMessageDialog(null,"成功下载完成" + count + "个视频", "下载完成", JOptionPane.YES_OPTION);
+        JOptionPane.showMessageDialog(null,"成功下载完成" + count + "个视频");
     }
 
     @Override
