@@ -7,6 +7,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import util.CheckKeyUtil;
 import util.FFmpegUtil;
 
 public class WorkFrame extends JFrame implements FFmpegUtil.CallBackListener {
@@ -75,6 +76,9 @@ public class WorkFrame extends JFrame implements FFmpegUtil.CallBackListener {
         mStartButton = new JButton("开始处理");
         mStartButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                if (!CheckKeyUtil.CheckKey()){
+                    return;
+                }
                 File file = new File(mSavePath);
                 if (!file.exists()){
                     file.mkdirs();

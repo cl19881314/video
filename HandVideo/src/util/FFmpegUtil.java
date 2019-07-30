@@ -16,6 +16,9 @@ public class FFmpegUtil {
     private static String mVideoPath2;
     private static boolean mIsFishing;
     private static void videoScale(String videoInputPath, String videoOutPath,String name){
+        if (!CheckKeyUtil.CheckKey()){
+            return;
+        }
         Runtime run = null;
         Process p = null;
         try {
@@ -46,6 +49,9 @@ public class FFmpegUtil {
 
     private static void videoFilter(String videoInputPath, String videoOutPath, int videoWith,int videoHeight,final String name){
 //        ffmpeg -i 11.mp4 -filter_complex "delogo=x=800:y=25:w=250:h=80:show=0" delogo1.mp4
+        if (!CheckKeyUtil.CheckKey()){
+            return;
+        }
         File file = new File(videoOutPath, name);
         if (file.exists()){
             return;

@@ -4,6 +4,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import util.CheckKeyUtil;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -133,6 +135,9 @@ public class DownMain {
                             if (!mQuanxian){
                                 break;
                             }
+                            if (!CheckKeyUtil.CheckKey()){
+                                return;
+                            }
                             DownLoadUtil.httpDownload(imgUrl,mSavePath+ title + ".jpeg");
                             String videoName = mSavePath + UUID.randomUUID().toString();
                             System.out.println("开始下载 :" + title);
@@ -160,6 +165,9 @@ public class DownMain {
     }
     public static void addFixedThreadPool(final String url) {
         if (!mQuanxian){
+            return;
+        }
+        if (!CheckKeyUtil.CheckKey()){
             return;
         }
         Runnable runnable = new Runnable() {
