@@ -7,9 +7,11 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import javax.swing.*;
 
-public class LoginFrame extends JFrame{
+public class LoginFrame2 extends JFrame{
     private static JButton bt1;//登陆按钮
     private static JButton bt2;//退出按钮
     private static JButton cc; //复制
@@ -21,12 +23,12 @@ public class LoginFrame extends JFrame{
     private static JLabel jl_password;
     private static String userName;
     private static String mStoreKey =  "storeKey";
-    public LoginFrame(){//初始化登陆界面
+    public LoginFrame2(){//初始化登陆界面
         Font font =new Font("黑体", Font.PLAIN, 20);//设置字体
         jf_1 = new JFrame("登陆界面");
         jf_1.setSize(450, 300);
         //给登陆界面添加背景图片
-//        ImageIcon bgim = new ImageIcon(LoginFrame.class.getResource("baozou.PNG")) ;//背景图案
+//        ImageIcon bgim = new ImageIcon(LoginFrame2.class.getResource("baozou.PNG")) ;//背景图案
 //        bgim.setImage(bgim.getImage().
 //                getScaledInstance(bgim.getIconWidth(),
 //                        bgim.getIconHeight(),
@@ -81,7 +83,7 @@ public class LoginFrame extends JFrame{
 
     public static void main(String[] args) {
         //初始化登陆界面
-        LoginFrame hl = new LoginFrame();
+        final LoginFrame2 hl = new LoginFrame2();
         //登陆点击事件
         ActionListener bt1_ls = new ActionListener() {
             @Override
@@ -120,11 +122,35 @@ public class LoginFrame extends JFrame{
         if (storeValue!= null && !storeValue.equals("")){
             jtext2.setText(storeValue);
         }
-        //70-85-C2-79-19-36
+        jf_1.addWindowListener(new WindowListener() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+            }
 
-//        String encrypt = util.AESHandle.Encrypt("70-85-C2-79-19-36", "chen1234567890@@");
-//        System.out.println(encrypt);
-//        String decrypt = util.AESHandle.Decrypt("Apv+TGJLpX31Yxc1vUazuwgoykK3gmMoAXA4xUp+jms=", "chen1234567890@@");
-//        System.out.println(decrypt);
+            @Override
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+            }
+
+            @Override
+            public void windowIconified(WindowEvent e) {
+            }
+
+            @Override
+            public void windowDeiconified(WindowEvent e) {
+            }
+
+            @Override
+            public void windowActivated(WindowEvent e) {
+            }
+
+            @Override
+            public void windowDeactivated(WindowEvent e) {
+            }
+        });
     }
 }

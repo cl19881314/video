@@ -4,10 +4,7 @@ import util.CheckKeyUtil;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -56,17 +53,49 @@ public class WorkFrame extends JFrame implements DownMain.VideoDownLister {
         failedJsp.setBounds(10, 620, 1000, 180);
         add(failedJsp);
 
-        addWindowListener(new WindowAdapter() {
-            public void WindowClosing(WindowEvent e) {
-                dispose();
-                System.exit(0);
-            }
-        });
         setSize(1200, 850);
         setTitle("红哥--视频下载器");
         setLocation(250, 100);
         setResizable(false);
         show();
+
+        addWindowListener(new WindowListener() {
+
+            @Override
+            public void windowOpened(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowIconified(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowDeiconified(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowActivated(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowDeactivated(WindowEvent e) {
+
+            }
+        });
     }
 
     private void addOpenButton() {

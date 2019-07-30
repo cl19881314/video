@@ -24,7 +24,7 @@ public class FFmpegUtil {
         try {
             run = Runtime.getRuntime();
             String tempName = UUID.randomUUID().toString().replace("-","") + ".mp4";
-            p = run.exec("./tools/ffmpeg -i "+videoInputPath+" -vf scale=1280:720,setsar=1:1 "+ videoOutPath + "\\" + tempName);
+            p = run.exec("./tool/ffmpeg.exe -i "+videoInputPath+" -vf scale=1280:720,setsar=1:1 "+ videoOutPath + "\\" + tempName);
             mVideoPath2 = videoOutPath + tempName;
             //释放进程
             p.getOutputStream().close();
@@ -73,7 +73,7 @@ public class FFmpegUtil {
             int with = videoWith /4 ;
             double height = videoHeight / 6.5;
             String tempName = UUID.randomUUID().toString().replace("-","") + ".mp4";
-            String command = "./tools/ffmpeg -i "+videoInputPath+" -filter_complex \"delogo=x="+ start +":y=10:w=" + with +":h=" + height + ":show=0\" "+ videoOutPath + tempName;
+            String command = "./tool/ffmpeg.exe -i "+videoInputPath+" -filter_complex \"delogo=x="+ start +":y=10:w=" + with +":h=" + height + ":show=0\" "+ videoOutPath + tempName;
             System.out.println(command);
             p = run.exec(command);
             mVideoPath1 = videoOutPath + tempName;
