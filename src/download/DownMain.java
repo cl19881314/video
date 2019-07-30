@@ -4,7 +4,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -20,7 +19,9 @@ public class DownMain {
     private static Vector<String> failedUrlList;
     private static ArrayList<String> originalUrlList;
     private static String mSavePath;
-    public static void main(String pathname,String savePath){
+    private static Boolean mQuanxian; //安全验证
+    public static void main(String pathname,String savePath,Boolean quanxian){
+        mQuanxian = quanxian;
         mSavePath = savePath;
         fixedThreadPool = Executors.newFixedThreadPool(5);
         failedUrlList = new Vector<>();
@@ -70,6 +71,9 @@ public class DownMain {
     }
 
     private static void endDownVideo(){
+        if (!mQuanxian){
+            return;
+        }
         fixedThreadPool.shutdown();
         new Thread(new Runnable() {
             @Override
@@ -126,6 +130,9 @@ public class DownMain {
                             if (videoFile.exists()){
                                 break;
                             }
+                            if (!mQuanxian){
+                                break;
+                            }
                             DownLoadUtil.httpDownload(imgUrl,mSavePath+ title + ".jpeg");
                             String videoName = mSavePath + UUID.randomUUID().toString();
                             System.out.println("开始下载 :" + title);
@@ -152,6 +159,9 @@ public class DownMain {
         }
     }
     public static void addFixedThreadPool(final String url) {
+        if (!mQuanxian){
+            return;
+        }
         Runnable runnable = new Runnable() {
             @Override
             public void run() {

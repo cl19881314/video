@@ -39,6 +39,7 @@ public class WorkFrame extends JFrame implements FFmpegUtil.CallBackListener {
         setSize(1050, 650);
         setTitle("红哥--视频处理器");
         setLocation(250, 100);
+        setResizable(false);
         show();
     }
 

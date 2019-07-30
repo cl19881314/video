@@ -1,4 +1,5 @@
 import download.DownMain;
+import util.CheckKeyUtil;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -8,7 +9,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.net.URL;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -20,6 +20,8 @@ public class WorkFrame extends JFrame implements DownMain.VideoDownLister {
     private Vector<String> mFailedUrlList = new Vector<>();
     private String mSavePath = "D:\\video\\";
     private String mDownPath = "";
+    private String mStoreKey =  "storeKey";
+
     public WorkFrame() {
         setLayout(null);
         addOpenButton();
@@ -63,6 +65,7 @@ public class WorkFrame extends JFrame implements DownMain.VideoDownLister {
         setSize(1200, 850);
         setTitle("红哥--视频下载器");
         setLocation(250, 100);
+        setResizable(false);
         show();
     }
 
@@ -114,6 +117,9 @@ public class WorkFrame extends JFrame implements DownMain.VideoDownLister {
         JButton button = new JButton("开始下载");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                if (!CheckKeyUtil.CheckKey()){
+                    return;
+                }
                 if (!mDownPath.equals("")) {
                     File file = new File(mSavePath);
                     if (!file.exists()){
@@ -121,7 +127,7 @@ public class WorkFrame extends JFrame implements DownMain.VideoDownLister {
                     }
                     mLoadingTip.setText("准备下载...");
                     DownMain.addVideoNameListener(WorkFrame.this);
-                    DownMain.main(mDownPath,mSavePath);
+                    DownMain.main(mDownPath,mSavePath,true);
                 } else {
                     JOptionPane.showMessageDialog(null,"请选择下载文件");
                 }
